@@ -22,6 +22,7 @@ A single parentless object is rejected; even an empty visu fails that way. A rea
 - A visu's `MetaObject/Properties` holds an entry `{477d844b-…}` with `VisuUsageType`, `SizeX`, `SizeY`, `IsStartVisu`, `VisuSizeMode`, … Keep it (clone `Empty`) and set `SizeX`/`SizeY`. `Object/VisuSizeManager` may stay `<Null Name="Size" />`.
 - A plain object (text list) directly under the Application has an empty `Properties` dictionary.
 - On import, the dialog shows the whole tree. The user ticks only the new objects and leaves PLC_PRG, MainTask and the rest unticked.
+- Because of the device tree, the export is imported at the top level of a **blank project**; the visus and text lists are then copied from there into the target project's Application.
 
 ## Visualization object
 

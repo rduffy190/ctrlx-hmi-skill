@@ -26,7 +26,9 @@ python3 scripts/visugen.py references/example_screen_infeed.py build/INF_Main.ex
 python3 scripts/preview.py build/INF_Main.export references/example_preview_infeed.py build/preview
 ```
 
-Import in PLC Engineering with Project → Import…, tick only the new visus and text lists, then run *Update Visualization Text IDs* on the GlobalTextList.
+Import in PLC Engineering with Project → Import… and tick only the new visus and text lists, then run *Update Visualization Text IDs* on the GlobalTextList.
+
+**Import limitation:** the export carries the whole device tree (Device, Plc Logic, Application, ...), so it has to be imported at the top level of a **blank project**. Import it there, then copy the visus and text lists from that project into your own project's Application (copy / paste in the device tree).
 
 ## Other PLC Engineering versions
 
