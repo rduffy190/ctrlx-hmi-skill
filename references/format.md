@@ -69,7 +69,8 @@ Inputs:
 - **Tap / Toggle** go in `Array ConfiguredComplexInputs`: an item `{1de566f6-…}` with `DescriptionTree` Null, a member list holding `1186196937` = the variable (and optionally `1329445385` bool = Tap FALSE), and `SignatureName` `Visu_TapInput` / `Visu_ToggleInput`, `Name` `Tap` / `Toggle`, plus a `Description`. Tap is TRUE while pressed.
 - **Other actions** go in `Dictionary VisualElementInputActions`, keyed `OnMouseDown`, `OnMouseClick`, `OnMouseUp`:
   - numpad/keypad: `{e8e7e747-…}` with InputBoxVariable, InputType `VisuDialogs.Numpad` (imported) or `VisuDialogs.Keypad` (for TIME / STRING; imports and compiles), min, max, title. **The dialog title is an expression:** plain text must be a quoted IEC string (`'Bag length (mm)'`; the generator quotes it);
-  - ST snippet ('Execute ST code'): `{6302d3fe-…}` with STSnippet (generator: `st_action`, used for `VisuElems.CurrentVisu := 'X';` and enum writes). Format from the old project; imports and compiles on 3.6.5 (2026-10-14);
+  - Change shown visualization: Array `{69265815-ba9d-4bec-bfcb-427fb9172844}` of `{b4c3a27b-74e5-4a67-bfa9-12f8c8cda31f}` with `AssignExpr` (empty string), `<Null Name="Assign" />`, `Assign33` = visu name, `Type` `{a418300c-…}` = `Assignment` (generator: `visu_action`, `button(visu=...)`). From a PLC Engineering 3.6.5 export (2026-10-15); this is the navigation that works.
+  - ST snippet ('Execute ST code'): `{6302d3fe-…}` with STSnippet (generator: `st_action`, used for enum writes). Format from the old project; imports and compiles on 3.6.5 (2026-10-14), but `VisuElems.CurrentVisu := 'X';` in it did not change the screen (2026-10-15);
   - open a dialog: `{c01cd804-…}` / `{5d84b30d-…}`;
   - change the shown visu: `{4df7df60-…}` with Selection `{5aaff85c-…}` SelectedFrame and GlobSel `{f8c6f6c5-…}`.
 

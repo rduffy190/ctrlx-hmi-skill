@@ -27,6 +27,9 @@ MEMBER_TYPE = '{c694e3a2-5c0b-4177-ab35-cb06bd5a6a02}'
 CCI_TYPE = '{1de566f6-72a7-494c-9353-9a418172c96e}'
 NUMPAD_ACTION_TYPE = '{e8e7e747-f76f-4dee-ab1c-b9637e41ac26}'
 ST_ACTION_TYPE = '{6302d3fe-6ea5-4c42-819a-a9734a133b3d}'   # input action 'Execute ST code'
+VISU_ACTION_ARRAY = '{69265815-ba9d-4bec-bfcb-427fb9172844}'  # input action 'Change shown visualization'
+VISU_ACTION_TYPE = '{b4c3a27b-74e5-4a67-bfa9-12f8c8cda31f}'
+VISU_ACTION_KIND = '{a418300c-fdec-47d4-86a4-53b5a5f941fa}'
 
 # Property hash IDs (VisualElemMemberList)
 P = dict(
@@ -222,6 +225,20 @@ class Element:
         ET.SubElement(s, 'Single', {'Name': 'STSnippet', 'Type': 'string'}).text = code
 
 
+    def visu_action(self, visu, event='OnMouseClick'):
+        """Input action 'Change shown visualization' to a fixed visu (format from a PLC Engineering 3.6.5 export,
+        2026-10-15). Screen changes made with 'Execute ST code' (VisuElems.CurrentVisu := ...) did not navigate."""
+        d = self.el.find("Dictionary[@Name='VisualElementInputActions']")
+        ent = ET.SubElement(d, 'Entry')
+        ET.SubElement(ET.SubElement(ent, 'Key'), 'Single', {'Type': 'string'}).text = event
+        arr = ET.SubElement(ET.SubElement(ent, 'Value'), 'Array', {'Type': VISU_ACTION_ARRAY})
+        s = ET.SubElement(arr, 'Single', {'Type': VISU_ACTION_TYPE, 'Method': 'IArchivable'})
+        ET.SubElement(s, 'Single', {'Name': 'AssignExpr', 'Type': 'string'})
+        ET.SubElement(s, 'Null', {'Name': 'Assign'})
+        ET.SubElement(s, 'Single', {'Name': 'Assign33', 'Type': 'string'}).text = visu
+        ET.SubElement(s, 'Single', {'Name': 'Type', 'Type': VISU_ACTION_KIND}).text = 'Assignment'
+
+
 class Screen:
     """One visualization. Add elements in draw order (later elements are painted on top)."""
 
@@ -292,7 +309,7 @@ class Screen:
         return e
 
     def button(self, x, y, w, h, text, var=None, toggle=False, invisible=None, deactivate=None, active=None, font=16,
-               color=0xE4E7EA, active_color=0x7FD08C, st=None):
+               color=0xE4E7EA, active_color=0x7FD08C, st=None, visu=None):
         """Tap/Toggle on var, and/or st = ST code run on click. active: colour-variable expression; the button
         shows active_color while it is TRUE (default: while pressed)."""
         e = self._add(self.t_button)
@@ -302,6 +319,8 @@ class Screen:
             e.tap(var, toggle)
         if st:
             e.st_action(st)
+        if visu:
+            e.visu_action(visu)
         if color is not None:            # None: keep the style's named colours
             e.color_list(P['btn_fill'], color)
             e.color_list(P['btn_alarm_fill'], active_color)
