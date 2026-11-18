@@ -19,14 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----------------------------------------------------------------------------
-
-Third-party content
-
-The files in references/libs/ and references/motion/ are generated from the
-public Bosch Rexroth manuals "ctrlX PLC Engineering, PLC Libraries 03VRS,
-Reference Book" (R911430583) and "ctrlX Motion App Version 4, Application
-Manual" (R911430551). That content remains the property of Bosch Rexroth AG
-and is not covered by the MIT License above. It is included for reference
-only; see the original manuals for their terms.
