@@ -58,8 +58,14 @@ def canon(e):
     return ET.canonicalize(ET.tostring(e, encoding='unicode'), strip_text=True)
 
 
-assert open(os.path.join(tdir, 'wrapper.export'), 'rb').read() == open(os.path.join(out, 'wrapper.export'), 'rb').read(), \
-    'wrapper.export changed'
+# the wrapper keeps the chain above Empty and Empty itself, nothing else
+kept = [vg.kids(vg.kids(e, 'MetaObject'), 'Name').text
+        for e in ET.parse(os.path.join(out, 'wrapper.export')).getroot().find('StructuredView/Single/List2')]
+chain = [vg.kids(vg.kids(e, 'MetaObject'), 'Name').text for e in tpl.entries
+         if vg.kids(vg.kids(e, 'MetaObject'), 'Name').text in ('Device', 'Plc Logic', 'Application', 'Empty')]
+assert kept == chain, (kept, chain)
+rebuilt = vg.Templates(out)
+assert canon(rebuilt.empty) == canon(tpl.empty), 'the Empty visu changed'
 orig = {e.get('TemplateName'): e for e in ET.parse(os.path.join(tdir, 'elements.xml')).getroot()}
 new = {e.get('TemplateName'): e for e in ET.parse(os.path.join(out, 'elements.xml')).getroot()}
 assert sorted(orig) == sorted(new) == ['button', 'numpad_action', 'rect', 'textlist'], (sorted(orig), sorted(new))
@@ -82,4 +88,18 @@ r = subprocess.run([sys.executable, os.path.join(HMI, 'scripts', 'make_templates
                    capture_output=True, text=True)
 assert r.returncode != 0 and 'Write a variable' in r.stderr, r.stderr
 
-print('PASS make_templates rebuilds wrapper.export and the four element parts, and rejects a scratch export without the numpad action')
+# an export of the single objects, without the device tree, must be rejected too
+lone = copy.deepcopy(root)
+ll = lone.find('StructuredView/Single/List2')
+for e in list(ll):
+    if vg.kids(vg.kids(e, 'MetaObject'), 'Name').text not in ('Empty', 'Elements', 'Texts'):
+        ll.remove(e)
+lone_path = os.path.join(work, 'lone.export')
+with open(lone_path, 'w', encoding='utf-8', newline='\r\n') as f:
+    f.write(vg.serialize(lone) + '\n')
+r = subprocess.run([sys.executable, os.path.join(HMI, 'scripts', 'make_templates.py'), lone_path, '-o', os.path.join(work, 't3')],
+                   capture_output=True, text=True)
+assert r.returncode != 0 and 'device tree' in r.stderr, r.stderr
+
+print('PASS make_templates keeps only the device chain and Empty, rebuilds the four element parts, and rejects exports '
+      'without the numpad action or without the device tree')

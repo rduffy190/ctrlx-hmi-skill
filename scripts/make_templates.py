@@ -14,7 +14,8 @@ a blank project whose Application holds
   - a visualization named Elements with one Rectangle and one Button; the button has an input action
     "Write a variable" with the Numpad dialog (any variable, any limits),
   - a text list named Texts with at least one text,
-and export those three objects with Project > Export Native.
+and export those three objects with Project > Export... (the IDE's export includes the device tree above them,
+which the import needs; only the chain Device > Plc Logic > Application is kept).
 
 Usage: python3 make_templates.py scratch.export [-o DIR] [--empty Empty] [--elements Elements] [--textlist Texts]
        DIR defaults to ../templates (the folder visugen.py reads; it is gitignored).
@@ -111,11 +112,26 @@ def main():
     action.set('TemplateName', 'numpad_action')
     parts.append(action)
 
-    # ---- wrapper: the device tree and the empty visualization, without the objects used above ---
+    # ---- wrapper: the device tree above the empty visualization, and that visualization -------
+    # The import needs the parent chain (Device > Plc Logic > Application). An export made from the IDE's menu
+    # carries the whole project; keep only that chain, so none of the project's own POUs or screens end up
+    # in every generated file. (The entry names and the Path names can differ in case: Plc Logic / PLC Logic.)
+    def full_path(e):
+        return [x.text.lower() for x in e.findall("Array[@Name='Path']/Single")] + [entry_name(e).lower()]
+
+    target = full_path(by_name[a.empty])
+    chain = [e for e in lst if full_path(e) == target[:len(full_path(e))]]
+    depths = sorted(len(full_path(e)) for e in chain)
+    root_ok = any(len(full_path(e)) == 1 and kids(e, 'IsRoot').text == 'True' for e in chain)
+    if depths != list(range(1, len(target) + 1)) or not root_ok:
+        fail('the export has no device tree above "%s" (it needs %s). Export from the IDE menu, '
+             'Project > Export..., which includes it; an export of the single objects (for example from a script) '
+             'does not.' % (a.empty, ' > '.join(x.title() for x in target[:-1]) or 'its parents'))
     wrapper = copy.deepcopy(root)
     wl = wrapper.find('StructuredView/Single/List2')
-    for e in list(wl):
-        if entry_name(e) in (a.elements, a.textlist):
+    keep = {id(e) for e in chain}
+    for orig, e in zip(list(lst), list(wl)):
+        if id(orig) not in keep:
             wl.remove(e)
     if a.empty != 'Empty':
         for e in wl:

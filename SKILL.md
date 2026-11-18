@@ -56,8 +56,8 @@ CODESYS visualization objects). **Before the first build, check that `templates/
 `templates/elements.xml` exist** (or `CTRLX_HMI_TEMPLATES` / `--templates DIR` points at them). If not, do not try
 to invent them: walk the user through README.md, "First run: create your templates": a scratch project with a visu
 `Empty`, a visu `Elements` (a rectangle and a button with a Write-a-variable action using the Numpad dialog) and a text
-list `Texts`, exported with Project -> Export Native, then `python3 scripts/make_templates.py scratch.export`. The
-script names whatever is missing from the export.
+list `Texts`, exported with Project -> Export... (the IDE's export includes the device tree, which the import needs),
+then `python3 scripts/make_templates.py scratch.export`. The script names whatever is missing from the export.
 
 `templates/wrapper.export` holds the device tree and one empty visu named `Empty`. `templates/elements.xml` holds the
 rectangle, the button, a text list and the numpad action. If the target PLC Engineering version changes, or an element

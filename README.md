@@ -42,7 +42,8 @@ them from the software you are licensed to use. You do this once per PLC Enginee
    - a visualization named `Elements` holding one **Rectangle** and one **Button**. Give the button an input action
      **Write a variable** (any variable, dialog type **Numpad**, any limits);
    - a text list named `Texts` with at least one text.
-2. Select those three objects and export them with **Project -> Export Native...**. Save the file as `scratch.export`.
+2. Select those three objects and export them with **Project -> Export...** (the IDE's own export, which also writes
+   the device tree above them). Save the file as `scratch.export`.
 3. Run
 
        python3 scripts/make_templates.py scratch.export
@@ -50,6 +51,9 @@ them from the software you are licensed to use. You do this once per PLC Enginee
    It writes `templates/wrapper.export` and `templates/elements.xml` (the folder is gitignored). If something is missing it
    says what, for example that the button has no Write-a-variable action. Other object names: `--empty`, `--elements`,
    `--textlist`. Another folder: `-o DIR`, then pass `--templates DIR` to `visugen.py` or set `CTRLX_HMI_TEMPLATES`.
+   Of the device tree it keeps only the chain above `Empty` (Device > Plc Logic > Application), so nothing else from
+   the project ends up in generated files. An export without the device tree (for example one written by a script
+   for the single objects) is rejected: the import needs that chain.
 
 Menu names differ a little between versions. What matters is the content of the export: an empty visu called `Empty`,
 a visu called `Elements` with a rectangle and a button that has a Write-a-variable (Numpad) action, and a text list called
