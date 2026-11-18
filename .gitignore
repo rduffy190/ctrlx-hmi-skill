@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+build/
+
+# Made by each user with scripts/make_templates.py (exports of CODESYS objects: not redistributed)
+templates/
